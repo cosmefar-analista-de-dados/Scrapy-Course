@@ -1,3 +1,4 @@
+from bookscraper.items import BookItem
 import scrapy
 
 
@@ -34,20 +35,19 @@ class BookspiderSpider(scrapy.Spider):
     def parse_book_page(self, response):
 
         table_rows = response.css('table tr')
-        
-        yield {
+        book_item = BookItem()
 
-            'url' : response.url,
-            'title' : response.css('.product_main h1::text').get(),
-            'product-type' : table_rows[1].css('td ::text').get(),
-            'price_excl_tax' : table_rows[2].css('td ::text').get(),
-            'price_incl_tax' : table_rows[3].css('td ::text').get(),
-            'tax' : table_rows[4].css('td ::text').get(),
-            'availability' : table_rows[5].css('td ::text').get(),
-            'num_reviews' : table_rows[6].css('td ::text').get(),
-            'stars' : response.xpath('//*[@id="content_inner"]/article/div[1]/div[2]/p[3]').attrib['class'],
-            'category' : response.xpath('//*[@id="default"]/div/div/ul/li[3]/a/text()').get(),
-            'description' : response.xpath('//*[@id="content_inner"]/article/p/text()').get(),
-            'price' : response.css('.product_main .price_color::text').get()
+        book_item['url'] = response.url
+        book_item['title'] = response.css('.product_main h1::text').get()
+        book_item['product_type'] = table_rows[1].css('td ::text').get()
+        book_item['price_excl_tax'] = table_rows[2].css('td ::text').get()
+        book_item['price_incl_tax'] = table_rows[3].css('td ::text').get()
+        book_item['tax'] = table_rows[4].css('td ::text').get()
+        book_item['availability'] = table_rows[5].css('td ::text').get()
+        book_item['num_reviews'] = table_rows[6].css('td ::text').get()
+        book_item['stars'] = response.xpath('//*[@id="content_inner"]/article/div[1]/div[2]/p[3]').attrib['class']
+        book_item['category'] = response.xpath('//*[@id="default"]/div/div/ul/li[3]/a/text()').get()
+        book_item['description'] = response.xpath('//*[@id="content_inner"]/article/p/text()').get()
+        book_item['price'] = response.css('.product_main .price_color::text').get()
 
-        }
+        yield book_item
